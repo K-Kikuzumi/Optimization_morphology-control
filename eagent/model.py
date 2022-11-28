@@ -22,7 +22,7 @@ class Model:
         if "params_jsonname" in model_path_dict.keys():
             params_jsonname = os.path.join(cfg["output_dirname"], model_path_dict["params_jsonname"])
             with open(params_jsonname, "r") as f:
-                params = json.load(f)
+                params = json.load(f)  # # checkpointのやつからとってくる。中身はinitial_pramsと同じような感じ
 
         structure_edges = params["structure_edges"]
         structure_weights = params["structure_weights"]
@@ -45,17 +45,17 @@ class Model:
         # with open("output.json", "w") as f:
         #     json.dump(self.get_flat_policy_weights().tolist(), f)
         self.load_policy_model(model_path_dict)
-
+        
         self.set_policy(policy_weights)
 
     def __del__(self):
         self.env.close()
 
-    def __make_policy_model(self):
+    def __make_policy_model(self):  # # PPO,DDPGとかを起動
         cfg = self.cfg
         rl_cfg = cfg["rl_cfg"]
         policy_kwargs = cfg["policy_kwargs"].copy()
-        if policy_kwargs["activation_fn"] == "tanh":
+        if policy_kwargs["activation_fn"] == "tanh":  # # 活性化関数についていろいろ
             policy_kwargs["activation_fn"] = torch.nn.Tanh
         elif policy_kwargs["activation_fn"] == "relu":
             policy_kwargs["activation_fn"] = torch.nn.ReLU
@@ -68,7 +68,7 @@ class Model:
         # Without this, tempfile.gettempdir() will be called many times in SB3 and it will slow down
         os.environ["SB3_LOGDIR"] = os.path.join("log", "temp")
 
-        if rl_cfg["algorithm"] == "ppo":
+        if rl_cfg["algorithm"] == "ppo":  # # PPOのとき
             assert cfg["policy"] == "MlpPolicy"
             return PPO(
                 policy="MlpPolicy",
@@ -76,7 +76,7 @@ class Model:
                 policy_kwargs=policy_kwargs,
                 verbose=cfg["policy_verbose"],
             )
-        elif rl_cfg["algorithm"] == "ddpg":
+        elif rl_cfg["algorithm"] == "ddpg":  # # DDPGのとき
             assert cfg["policy"] == "MultiInputPolicy"
             return DDPG(
                 policy=cfg["policy"],
@@ -84,7 +84,7 @@ class Model:
                 policy_kwargs=policy_kwargs,
                 verbose=cfg["policy_verbose"],
             )
-        elif rl_cfg["algorithm"] == "ddpg_her":
+        elif rl_cfg["algorithm"] == "ddpg_her":  # # DDPG_herのとき
             assert cfg["policy"] == "MultiInputPolicy"
             assert rl_cfg["goal_selection_strategy"] in ["future", "final", "episode"]
             return DDPG(
@@ -105,7 +105,7 @@ class Model:
                 tensorboard_log=rl_cfg["tb_log"],
                 verbose=cfg["policy_verbose"],
             )
-        elif rl_cfg["algorithm"] == "sac_her":
+        elif rl_cfg["algorithm"] == "sac_her":  # # SAC_herのとき
             assert cfg["policy"] == "MultiInputPolicy"
             assert rl_cfg["goal_selection_strategy"] in ["future", "final", "episode"]
             return SAC(
@@ -150,7 +150,7 @@ class Model:
             pklname = os.path.join(cfg["output_dirname"], model_path_dict["replay_buffer_pklname"])
             self.policy_model.save_replay_buffer(pklname)
 
-    def learn_policy_model(self):
+    def learn_policy_model(self):  # # stable_baselinesで学習まわす
         cfg = self.cfg
         if cfg["rl_cfg"]["algorithm"] in ["ppo", "ddpg", "ddpg_her", "sac_her"]:
             self.policy_model.learn(

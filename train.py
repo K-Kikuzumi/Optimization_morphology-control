@@ -21,7 +21,7 @@ version = "0.8.8"
 
 
 class Processor():
-    def __init__(self, cfg, mpi_rank):
+    def __init__(self, cfg, mpi_rank):  # # initial_params_filename を書く。チェックポイントがあればそれをinitialにする。
         self.mpi_rank = mpi_rank
 
         self.cfg = cfg
@@ -88,7 +88,7 @@ class Processor():
     def leader_process(self):
         print("--------------------")
         print("Start leader_process")
-        sys.stdout.flush()
+        sys.stdout.flush()  # # 上のやつをここで出力
         cfg = self.cfg
 
         # Keep cfg settings as local variables
@@ -261,7 +261,7 @@ class Processor():
 
             completed = trainer.generation >= cfg["max_generation"]
             # Save each object once every few generations
-            if trainer.generation % cfg["checkpoint_cycle"] == 0 or completed:
+            if trainer.generation % cfg["checkpoint_cycle"] == 0 or completed:  # # チェックポイント作成
                 checkpoint = {}
 
                 pickles_dirname = os.path.join(output_dirname, "pickles")
