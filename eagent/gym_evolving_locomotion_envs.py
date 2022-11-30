@@ -38,7 +38,7 @@ class EvolvingWalkerEnv(mujoco_env.MujocoEnv, utils.EzPickle, EvolvingTools):
         with open(temp_fullname, "w") as f:
             f.write(xml_data)
         mujoco_env.MujocoEnv.__init__(self, temp_fullname, 5)
-        # os.remove(temp_fullname)
+        os.remove(temp_fullname)
 
     def step(self, all_joint_action):
         # if self.is_First:
