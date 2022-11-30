@@ -1,5 +1,6 @@
 import numpy as np
 import re
+import random
 
 
 class EvolvingTools():
@@ -78,3 +79,14 @@ class EvolvingTools():
             contact_state[limb_id] = 1.0
 
         return contact_state
+
+    # # select one joint to be broken at random
+    def broken_joint_selector(self):
+        print("------------------------")
+        print("selecting one joint to be broken...")
+        max_joint_id_list = max(self.rigid_id_2_joint_ids)
+        max_joint_id = max(max_joint_id_list)
+        self.broken_joint_id = random.randint(0, max_joint_id)
+        print(f"joint[{self.broken_joint_id}] is to be broken!")
+        print("------------------------")
+        return self.broken_joint_id

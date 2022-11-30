@@ -19,11 +19,15 @@ class EvolvingWalkerEnv(mujoco_env.MujocoEnv, utils.EzPickle, EvolvingTools):
         self.__reset_env()
 
     def __reset_env(self):
+        # self.is_First = True
+        self.broken_joint_id = self.broken_joint_selector()
         # Create an xml file and delete it immediately after loading
         xml_data = WalkerXmlGenerater(self.env_cfg).generate_xml(
             self.structure_tree,
             self.structure_properties,
             self.dofs,
+            self.broken_joint_id,
+            self.rigid_id_2_joint_ids
         )
         fd, temp_fullname = tempfile.mkstemp(
             text=True,
@@ -34,9 +38,12 @@ class EvolvingWalkerEnv(mujoco_env.MujocoEnv, utils.EzPickle, EvolvingTools):
         with open(temp_fullname, "w") as f:
             f.write(xml_data)
         mujoco_env.MujocoEnv.__init__(self, temp_fullname, 5)
-        os.remove(temp_fullname)
+        # os.remove(temp_fullname)
 
     def step(self, all_joint_action):
+        # if self.is_First:
+        #     self.broken_joint_id = self.broken_joint_selector()
+        #     self.is_First = False
         xposbefore = self.get_body_com("torso")[0]
         a = self.__calc_action(all_joint_action)
         self.do_simulation(a, self.frame_skip)
@@ -88,6 +95,9 @@ class EvolvingWalkerEnv(mujoco_env.MujocoEnv, utils.EzPickle, EvolvingTools):
             for joint_id in joint_ids:
                 action[joint_id] = all_joint_action[rigid_id * 2 + idx]
                 idx += 1
+
+        # # a joint is broken!!!!
+        action[self.broken_joint_id] = 0
 
         a = actuation_center + action * actuation_range
         return np.clip(a, ctrlrange[:, 0], ctrlrange[:, 1])
