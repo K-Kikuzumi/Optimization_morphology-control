@@ -55,7 +55,7 @@ class XmlGenerater():
         if broken_joint_id == rigid_id_2_joint_ids[current][0]:
             xml_data_list.append(f"""
 {tab}<body pos="{body_pos[0]} {body_pos[1]} {body_pos[2]}" name="body_{rigid_body_name}_broken_joint">
-{tab}   <geom rgba="1 0 0 0.2" conaffinity="0" contype="0" name="geom_{rigid_body_name}_broken_joint" class="robot0:geom" size="0.15" type="sphere" mass ="0"/>
+{tab}   <geom rgba="1 0 0 0.3" conaffinity="0" contype="0" name="geom_{rigid_body_name}_broken_joint" class="robot0:geom" size="0.2" type="sphere" mass ="0"/>
 {tab}</body>
 {tab}<body pos="{body_pos[0]} {body_pos[1]} {body_pos[2]}" name="body_{rigid_body_name}">
 {tab}   <geom rgba="1 0 0 0.8" conaffinity="{conaffinity}" fromto="0.0 0.0 0.0 {fromto[0]} {fromto[1]} {fromto[2]}" name="geom_{rigid_body_name}" class="robot0:geom" size="{scale}" type="capsule"/>""")
@@ -68,20 +68,50 @@ class XmlGenerater():
         for i in range(np.round(dof).astype(int)):
             id = i + 1
             [r0, r1] = self.robot_cfg["joint_range"]
-            [cr0, cr1] = self.robot_cfg["ctrlrange"]
+            [cr0, cr1] = self.robot_cfg["ctrlrange"]      
+
+            # # a joint is locked
+            # # if broken_joint_id == rigid_id_2_joint_ids[current][0]:
+            #     [r0, r1] = [-1e-8, 0]
+            #     print(f"-- the joint [{broken_joint_id}] is locked!!")
+            # else:
+            #     [r0, r1] = self.robot_cfg["joint_range"]
+
+            # # a joint is free
+            # if broken_joint_id == rigid_id_2_joint_ids[current][0]:
+            #     [r0, r1] = [-1.5, 1.5]
+            #     [cr0, cr1] = [-1e-10, 0]
+            #     print(f"-- the joint [{broken_joint_id}] is free!!")
+            # else:
+            #     [cr0, cr1] = self.robot_cfg["ctrlrange"]
+
             [fr0, fr1] = self.robot_cfg["forcerange"]
-            xml_data_list.append(f"""
-{tab}   <joint axis="{axises[i][0]} {axises[i][1]} {axises[i][2]}" pos="0.0 0.0 0.0" range="{r0} {r1}" type="hinge" name="robot0:joint_{rigid_body_name}_{id}"/>""")
-            if self.robot_cfg["actuator"] == "motor":
-                gear = self.robot_cfg["gear"]
-                self.actuators_xml.append(f"""
+            if broken_joint_id == rigid_id_2_joint_ids[current][0]:
+                xml_data_list.append(f"""
+{tab}   <joint damping="0" axis="{axises[i][0]} {axises[i][1]} {axises[i][2]}" pos="0.0 0.0 0.0" range="{r0} {r1}" type="hinge" name="robot0:joint_{rigid_body_name}_{id}"/>""")
+                if self.robot_cfg["actuator"] == "motor":
+                    gear = self.robot_cfg["gear"]
+                    self.actuators_xml.append(f"""
         <motor ctrllimited="true" ctrlrange="{cr0} {cr1}" forcerange="{fr0} {fr1}" joint="robot0:joint_{rigid_body_name}_{id}" gear="{gear}"/>""")
-            elif self.robot_cfg["actuator"] == "position":
-                kp = self.robot_cfg["kp"]
-                self.actuators_xml.append(f"""
+                elif self.robot_cfg["actuator"] == "position":
+                    kp = self.robot_cfg["kp"]
+                    self.actuators_xml.append(f"""
         <position ctrllimited="true" ctrlrange="{cr0} {cr1}" forcerange="{fr0} {fr1}" kp="{kp}" joint="robot0:joint_{rigid_body_name}_{id}"/>""")
+                else:
+                    raise NotImplementedError
             else:
-                raise NotImplementedError
+                xml_data_list.append(f"""
+{tab}   <joint damping="0" axis="{axises[i][0]} {axises[i][1]} {axises[i][2]}" pos="0.0 0.0 0.0" range="{r0} {r1}" type="hinge" name="robot0:joint_{rigid_body_name}_{id}"/>""")
+                if self.robot_cfg["actuator"] == "motor":
+                    gear = self.robot_cfg["gear"]
+                    self.actuators_xml.append(f"""
+        <motor ctrllimited="true" ctrlrange="{cr0} {cr1}" forcerange="{fr0} {fr1}" joint="robot0:joint_{rigid_body_name}_{id}" gear="{gear}"/>""")
+                elif self.robot_cfg["actuator"] == "position":
+                    kp = self.robot_cfg["kp"]
+                    self.actuators_xml.append(f"""
+        <position ctrllimited="true" ctrlrange="{cr0} {cr1}" forcerange="{fr0} {fr1}" kp="{kp}" joint="robot0:joint_{rigid_body_name}_{id}"/>""")
+                else:
+                    raise NotImplementedError
 
         z_from_torso += fromto[2]
         self.min_z_from_torso = min(self.min_z_from_torso, z_from_torso)
