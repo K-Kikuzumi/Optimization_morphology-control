@@ -26,7 +26,7 @@ class XmlGenerater():
         if env_cfg is not None and "robot_cfg" in env_cfg.keys():
             self.robot_cfg.update(copy.deepcopy(env_cfg["robot_cfg"]))
 
-    def _generate_nested_xml(self, current, body_pos, tree, dofs, params_list, depth, broken_joint_id, rigid_id_2_joint_ids, z_from_torso=0):
+    def _generate_nested_xml(self, current, body_pos, tree, dofs, params_list, depth, broken_joint_ids, rigid_id_2_joint_ids, z_from_torso=0):
         scale = self.robot_cfg["scale"]
         fromto_phi = params_list[current][0] * np.pi * 2.0
         fromto_theta = params_list[current][1] * np.pi * 2.0
@@ -52,7 +52,7 @@ class XmlGenerater():
         tab = " " * (8 + 4 * depth)
 
         # # make a marker at the broken joint
-        if broken_joint_id == rigid_id_2_joint_ids[current][0]:
+        if rigid_id_2_joint_ids[current][0] in broken_joint_ids:
             xml_data_list.append(f"""
 {tab}<body pos="{body_pos[0]} {body_pos[1]} {body_pos[2]}" name="body_{rigid_body_name}_broken_joint">
 {tab}   <geom rgba="1 0 0 0.3" conaffinity="0" contype="0" name="geom_{rigid_body_name}_broken_joint" class="robot0:geom" size="0.2" type="sphere" mass ="0"/>
@@ -71,22 +71,11 @@ class XmlGenerater():
             [cr0, cr1] = self.robot_cfg["ctrlrange"]      
 
             # # a joint is locked
-            # # if broken_joint_id == rigid_id_2_joint_ids[current][0]:
+            # if rigid_id_2_joint_ids[current][0] in broken_joint_ids:
             #     [r0, r1] = [-1e-8, 0]
-            #     print(f"-- the joint [{broken_joint_id}] is locked!!")
-            # else:
-            #     [r0, r1] = self.robot_cfg["joint_range"]
-
-            # # a joint is free
-            # if broken_joint_id == rigid_id_2_joint_ids[current][0]:
-            #     [r0, r1] = [-1.5, 1.5]
-            #     [cr0, cr1] = [-1e-10, 0]
-            #     print(f"-- the joint [{broken_joint_id}] is free!!")
-            # else:
-            #     [cr0, cr1] = self.robot_cfg["ctrlrange"]
 
             [fr0, fr1] = self.robot_cfg["forcerange"]
-            if broken_joint_id == rigid_id_2_joint_ids[current][0]:
+            if rigid_id_2_joint_ids[current][0] in broken_joint_ids:
                 xml_data_list.append(f"""
 {tab}   <joint damping="0" axis="{axises[i][0]} {axises[i][1]} {axises[i][2]}" pos="0.0 0.0 0.0" range="{r0} {r1}" type="hinge" name="robot0:joint_{rigid_body_name}_{id}"/>""")
                 if self.robot_cfg["actuator"] == "motor":
@@ -101,7 +90,7 @@ class XmlGenerater():
                     raise NotImplementedError
             else:
                 xml_data_list.append(f"""
-{tab}   <joint damping="0" axis="{axises[i][0]} {axises[i][1]} {axises[i][2]}" pos="0.0 0.0 0.0" range="{r0} {r1}" type="hinge" name="robot0:joint_{rigid_body_name}_{id}"/>""")
+{tab}   <joint axis="{axises[i][0]} {axises[i][1]} {axises[i][2]}" pos="0.0 0.0 0.0" range="{r0} {r1}" type="hinge" name="robot0:joint_{rigid_body_name}_{id}"/>""")
                 if self.robot_cfg["actuator"] == "motor":
                     gear = self.robot_cfg["gear"]
                     self.actuators_xml.append(f"""
@@ -118,7 +107,7 @@ class XmlGenerater():
 
         for child in tree[current]:
             xml_data_list.append(self._generate_nested_xml(
-                child, fromto, tree, dofs, params_list, depth + 1, broken_joint_id, rigid_id_2_joint_ids, z_from_torso))
+                child, fromto, tree, dofs, params_list, depth + 1, broken_joint_ids, rigid_id_2_joint_ids, z_from_torso))
         xml_data_list.append(f"""\n{tab}</body>""")
         return "".join(xml_data_list)
 
@@ -139,7 +128,7 @@ class WalkerXmlGenerater(XmlGenerater):
         }
         XmlGenerater.__init__(self, env_cfg)
 
-    def generate_xml(self, tree, params, dofs, broken_joint_id, rigid_id_2_joint_ids):
+    def generate_xml(self, tree, params, dofs, broken_joint_ids, rigid_id_2_joint_ids):
         params_list = np.array(params).reshape([-1, 9]).tolist()
 
         torso_radius = self.robot_cfg["torso_radius"] * self.robot_cfg["scale"]
@@ -174,7 +163,7 @@ class WalkerXmlGenerater(XmlGenerater):
             phi = params_list[child][7] * np.pi * 2.0
             theta = params_list[child][8] * np.pi * 2.0
             body_pos = polar_to_cartesian(phi, theta, torso_radius)
-            xml_data_list.append(self._generate_nested_xml(child, body_pos, tree, dofs, params_list, 1, broken_joint_id, rigid_id_2_joint_ids, body_pos[2]))
+            xml_data_list.append(self._generate_nested_xml(child, body_pos, tree, dofs, params_list, 1, broken_joint_ids, rigid_id_2_joint_ids, body_pos[2]))
 
         xml_data_list.append("""
         </body>
@@ -210,7 +199,7 @@ class HandXmlGenerater(XmlGenerater):
         }
         XmlGenerater.__init__(self, env_cfg)
 
-    def generate_xml(self, tree, params, dofs, object_type, broken_joint_id):
+    def generate_xml(self, tree, params, dofs, object_type, broken_joint_ids):
         params_list = np.array(params).reshape([-1, 9]).tolist()
 
         torso_radius = self.robot_cfg["torso_radius"] * self.robot_cfg["scale"]
@@ -257,7 +246,7 @@ class HandXmlGenerater(XmlGenerater):
             phi = params_list[child][7] * np.pi * 2.0
             theta = params_list[child][8] * np.pi * 2.0
             body_pos = polar_to_cartesian(phi, theta, torso_radius)
-            xml_data_list.append(self._generate_nested_xml(child, body_pos, tree, dofs, params_list, 1, broken_joint_id, body_pos[2]))
+            xml_data_list.append(self._generate_nested_xml(child, body_pos, tree, dofs, params_list, 1, broken_joint_ids, body_pos[2]))
 
         xml_data_list.append("""
         </body>""")

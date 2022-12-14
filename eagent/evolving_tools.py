@@ -1,6 +1,5 @@
 import numpy as np
 import re
-import random
 
 
 class EvolvingTools():
@@ -80,16 +79,16 @@ class EvolvingTools():
 
         return contact_state
 
-    # # select one joint to be broken at random
-    def broken_joint_selector(self):
-        max_joint_id_list = max(self.rigid_id_2_joint_ids)
-        max_joint_id = max(max_joint_id_list)
-        self.broken_joint_id = random.randint(0, max_joint_id)
-        # self.broken_joint_id = 10
-        # print(f"joint[{self.broken_joint_id}] is to be broken!")
-        return self.broken_joint_id
-        # num_broken_joints = 1
-        # self.broken_joint_ids = random.sample(sum(self.rigid_id_2_joint_ids, []), num_broken_joints)
-        # self.broken_joint_ids = self.broken_joint_ids[0]
-        # # self.broken_joint_ids = 14
-        # return self.broken_joint_ids
+    # # select joints to be broken according to a failure rate
+    def broken_joints_selector(self):
+        joint_list = sum(self.rigid_id_2_joint_ids, [])
+
+        failure_rate = 0.1
+        self.broken_joint_ids = []
+
+        for i in joint_list:
+            failure = np.random.choice([True, False], p=(failure_rate, 1 - failure_rate))
+            if failure:
+                self.broken_joint_ids.append(i)
+
+        return self.broken_joint_ids
