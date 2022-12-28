@@ -5,3 +5,5 @@ __pycache__/
 /log/**/*.pkl
 /log/**/*.zip
 /log/temp/
+/log/*
+!log/old/
