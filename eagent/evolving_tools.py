@@ -79,16 +79,20 @@ class EvolvingTools():
 
         return contact_state
 
-    # # select joints to be broken according to a failure rate
-    def broken_joints_selector(self):
+    # # select joints to be failed according to a failure rate
+    def failed_joints_selector(self):
         joint_list = sum(self.rigid_id_2_joint_ids, [])
 
         failure_rate = 0.1
-        self.broken_joint_ids = []
+        self.failed_joint_ids = []
 
         for i in joint_list:
             failure = np.random.choice([True, False], p=(failure_rate, 1 - failure_rate))
             if failure:
-                self.broken_joint_ids.append(i)
+                self.failed_joint_ids.append(i)
 
-        return self.broken_joint_ids
+        # self.failed_joint_ids = []
+
+        return self.failed_joint_ids
+
+    def failed_joint_ids_tell(self, failed_joint_ids):
