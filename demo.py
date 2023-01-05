@@ -69,6 +69,7 @@ def main():
         while True:
             r, _, s = model.evaluate(20, cfg['num_steps_in_eval'], False)
             print(f"eval_reward: {r}, eval_success_rate: {s}")
+
     # make 4 graphs
     elif args.type == "graph":
         while True:
