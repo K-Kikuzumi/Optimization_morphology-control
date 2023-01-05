@@ -215,7 +215,7 @@ class Model:
         act, _states = self.policy_model.predict(obs, deterministic=True)
         return act
 
-    def evaluate(self, num_episodes, num_steps, use_elite=False):
+    def evaluate(self, num_episodes, num_steps, use_elite=False, make_graphs=False):
         rewards = []
         contact_rates = []
         num_success = 0
@@ -224,13 +224,21 @@ class Model:
                 render_mode=False,
                 num_steps=num_steps,
             )
+            if make_graphs is False:
             rewards.append(r)
+            else:
+                reward_and_ids = []
+                reward_and_ids.append(r)
+                reward_and_ids.append(self.env.failed_joint_ids)
+                rewards.append(reward_and_ids)
             contact_rates.append(c)
             num_success += int(is_success)
         contact_rate = np.mean(contact_rates, axis=0)
         success_rate = num_success / num_episodes
         if use_elite:
             return np.array(rewards).max(), contact_rate, success_rate
+        elif make_graphs:
+            return rewards, contact_rate, success_rate
         else:
             return np.array(rewards).mean(), contact_rate, success_rate
 

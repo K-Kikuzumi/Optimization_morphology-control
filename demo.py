@@ -9,6 +9,8 @@ from eagent.config import cfg_dict
 
 from stable_baselines3.common.callbacks import EvalCallback  # noqa
 
+import matplotlib.pyplot as plt
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -67,6 +69,65 @@ def main():
         while True:
             r, _, s = model.evaluate(20, cfg['num_steps_in_eval'], False)
             print(f"eval_reward: {r}, eval_success_rate: {s}")
+    # make 4 graphs
+    elif args.type == "graph":
+        while True:
+            num_episodes_in_eval = 2000  # Select a number
+
+            r, _, s = model.evaluate(num_episodes_in_eval, cfg['num_steps_in_eval'], False, make_graphs=True)
+
+            graph_dirname = os.path.join(os.path.dirname(cfg["initial_params_filename"]), "graph")
+            os.makedirs(graph_dirname, exist_ok=True)
+
+            # variables for plot
+            episodes = []
+            rewards = []
+            num_failures = []
+            for i in range(num_episodes_in_eval):
+                episodes.append(i + 1)
+            for i in range(num_episodes_in_eval):
+                rewards.append(r[i][0])
+                num_failures.append(len(r[i][1])) if len(r[i][1]) <= 4 else num_failures.append(4) # regard more than 4 as 4
+
+            # scatter diagram with colorbar
+            plt.scatter(episodes, rewards, s=30, c=num_failures, cmap="binary", lw=0.5, edgecolors="k", vmin=0, vmax=4)
+            plt.hlines(sum(rewards) / len(rewards), 0, num_episodes_in_eval, colors="r")
+            plt.colorbar(label="num_failures")
+            plt.xlim(0, num_episodes_in_eval)
+            plt.ylim(-100, 1300)
+            plt.xlabel("episode")
+            plt.ylabel("reward")
+            filename = os.path.join(graph_dirname, f"scatter_diagram_with_colorbar_{num_episodes_in_eval}_episodes.png")
+            plt.savefig(filename)
+
+            # scatter diagram
+            plt.scatter(episodes, rewards)
+            plt.hlines(sum(rewards) / len(rewards), 0, num_episodes_in_eval, colors="r")
+            plt.xlim(0, num_episodes_in_eval)
+            plt.ylim(-100, 1300)
+            plt.xlabel("episode")
+            plt.ylabel("reward")
+            filename = os.path.join(graph_dirname, f"scatter_diagram_{num_episodes_in_eval}_episodes.png")
+            plt.savefig(filename)
+
+            # histogram
+            plt.hist(rewards, range=(-100, 1300), rwidth=0.9, bins=28, orientation="horizontal")
+            plt.hlines(sum(rewards) / len(rewards), 0, num_episodes_in_eval, colors="r")
+            plt.xlim(0, num_episodes_in_eval / 2)
+            plt.ylim(-100, 1300)
+            plt.ylabel("reward")
+            filename = os.path.join(graph_dirname, f"histogram_{num_episodes_in_eval}_episodes.png")
+            plt.savefig(filename)
+
+            # violinplot
+            plt.violinplot(rewards, showmeans=True)
+            plt.ylim(-100, 1300)
+            plt.ylabel("reward")
+            filename = os.path.join(graph_dirname, f" violinplot_{num_episodes_in_eval}_episodes.png")
+            plt.savefig(filename)
+
+            break
+
     elif args.type == "record":
         # Create a window to init GLFW.
         GlfwContext(offscreen=True)
