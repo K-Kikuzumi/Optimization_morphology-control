@@ -219,7 +219,7 @@ class Model:
         rewards = []
         contact_rates = []
         num_success = 0
-        for _ in range(num_episodes):
+        for i in range(num_episodes):
             r, c, is_success = self.simulate_once(
                 render_mode=False,
                 num_steps=num_steps,
@@ -233,6 +233,8 @@ class Model:
                 rewards.append(reward_and_ids)
             contact_rates.append(c)
             num_success += int(is_success)
+            if (i + 1) % 200 == 0:
+                print(f"{i} / {num_episodes}")
         contact_rate = np.mean(contact_rates, axis=0)
         success_rate = num_success / num_episodes
         if use_elite:
