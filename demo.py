@@ -209,6 +209,9 @@ def main():
             plt.savefig(filename)
             plt.clf()
 
+            if n % 200 == 0:
+                print(f"{n} / {max_episode}")
+
     elif args.type == "record":
         # Create a window to init GLFW.
         GlfwContext(offscreen=True)
