@@ -173,6 +173,42 @@ def main():
         plt.savefig(filename)
         plt.close()
 
+    # show a change of a mean reward to select "num_episodes_in_eval"
+    elif args.type == "graph_ave":
+        episodes = []
+        rewards = []
+        reward_means = []
+        max_episode = 3000
+        print("start plot")
+        for n in range(max_episode):
+            n += 1
+
+            r, _, s = model.evaluate(1, cfg['num_steps_in_eval'], False, make_graphs=True)
+
+            rewards.append(r[0][0])
+            episodes.append(n)
+            reward_means_now = sum(rewards) / n
+            reward_means.append(reward_means_now)
+
+            graph_dirname = os.path.join(os.path.dirname(cfg["initial_params_filename"]), "graph")
+            os.makedirs(graph_dirname, exist_ok=True)
+
+            # line chart
+            plt.scatter(episodes, rewards, s=5)
+            plt.plot(episodes, reward_means)
+            plt.hlines(reward_means_now * 1.01, 0, n, color="r", linestyles="dashed")
+            plt.text(n, reward_means_now * 1.01, " + 1 %", color="red", ha="left", va="bottom")
+            plt.hlines(reward_means_now * 0.99, 0, n, color="r", linestyles="dashed", label="-1%")
+            plt.text(n, reward_means_now * 0.99, " - 1 %", color="red", ha="left", va="top")
+            plt.xlim(0, n)
+            plt.ylim(reward_means_now - 50, reward_means_now + 50)
+            plt.xlabel("episode")
+            plt.ylabel("reward")
+
+            filename = os.path.join(graph_dirname, f"scatter_graph_ave_in_{max_episode}.png")
+            plt.savefig(filename)
+            plt.clf()
+
     elif args.type == "record":
         # Create a window to init GLFW.
         GlfwContext(offscreen=True)
