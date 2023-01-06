@@ -45,7 +45,6 @@ class Model:
         # with open("output.json", "w") as f:
         #     json.dump(self.get_flat_policy_weights().tolist(), f)
         self.load_policy_model(model_path_dict)
-        
         self.set_policy(policy_weights)
 
     def __del__(self):
