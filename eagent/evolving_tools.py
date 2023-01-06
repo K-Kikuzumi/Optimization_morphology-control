@@ -6,6 +6,7 @@ class EvolvingTools():
     def __init__(self, max_num_limbs, structure_edges, structure_properties):
         self.max_num_limbs = max_num_limbs
         self.set_structure_params(structure_edges, structure_properties)
+        self.failed_joint_ids = []
 
     def __sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
@@ -96,3 +97,4 @@ class EvolvingTools():
         return self.failed_joint_ids
 
     def failed_joint_ids_tell(self, failed_joint_ids):
+        self.failed_joint_ids = failed_joint_ids

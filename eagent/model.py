@@ -11,6 +11,8 @@ from gym.wrappers import FilterObservation, FlattenObservation
 
 from .trainer import hard_sigmoid
 
+import itertools
+
 
 class Model:
     def __init__(self, cfg, initial_params, model_path_dict={}):
@@ -224,7 +226,7 @@ class Model:
                 num_steps=num_steps,
             )
             if make_graphs is False:
-            rewards.append(r)
+                rewards.append(r)
             else:
                 reward_and_ids = []
                 reward_and_ids.append(r)
@@ -282,3 +284,38 @@ class Model:
             print(f"reward: {total_reward}, timesteps: {t}")
 
         return total_reward, contact_rate, is_success
+
+    def evaluate_failure(self, num_episodes, num_steps, max_num_failures):
+        joint_ids = self.env.rigid_id_2_joint_ids
+        joint_id_list = sum(joint_ids, [])
+        joint_id_list = sorted(joint_id_list)
+
+        weighted_rewards = []
+        rewards = []
+        contact_rates = []
+        num_success = 0
+
+        for num_failures in range(max_num_failures + 1):
+            joint_failure_set = []
+            for i in itertools.combinations(joint_id_list, num_failures):  # for i in itertools.permutations(joint_id_list, num_failures):  # sometimes better to analyze
+                joint_failure_set.append(list(i))
+            for failed_joint in joint_failure_set:
+                for _ in range(1):
+                    self.env.failed_joint_ids_tell(failed_joint)
+                    r, c, is_success = self.simulate_once(
+                        render_mode=False,
+                        num_steps=num_steps
+                    )
+                    weight = 0.1 ** num_failures * 0.9 ** (len(joint_id_list) - num_failures)
+                    weighted_rewards.append(r * weight)
+                    reward_and_ids = []
+                    reward_and_ids.append(r)
+                    reward_and_ids.append(self.env.failed_joint_ids)
+                    rewards.append(reward_and_ids)
+                    contact_rates.append(c)
+                    num_success += int(is_success)
+                    print(failed_joint, r)
+            contact_rate = np.mean(contact_rates, axis=0)
+            success_rate = num_success / num_episodes
+
+        return rewards, contact_rate, success_rate, sum(weighted_rewards)

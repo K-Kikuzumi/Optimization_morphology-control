@@ -131,11 +131,47 @@ def main():
         plt.savefig(filename)
         plt.close()
 
+    # make a scatter diagram where rewards with failures within max_num_failures are shown
+    # calculate a weighted average
+    # ! Attention: Comment out "self.failed_joint_ids = self.failed_joints_selector()" in gym_evolving_locomotion_envs.__reset_env()
+    elif args.type == "graph_fail":
 
+        max_num_failures = 1  # Select a number
 
+        r, _, s, wa = model.evaluate_failure(20, cfg['num_steps_in_eval'], max_num_failures)
 
+        # weighted average
+        print(f"eval_weighted_reward: {wa}, eval_success_rate: {s}, ")
 
-            break
+        # variables for plot
+        episodes = []
+        failure_modes = []
+        rewards = []
+        num_failures = []
+        num_failure_modes = len(r)
+        for i in range(num_failure_modes):
+            episodes.append(i + 1)
+            rewards.append(r[i][0])
+            failure_modes.append(f"{r[i][1]}")
+            num_failures.append(len(r[i][1]))
+
+        graph_dirname = os.path.join(os.path.dirname(cfg["initial_params_filename"]), "graph")
+        os.makedirs(graph_dirname, exist_ok=True)
+
+        # scatter diagram with color bar
+        plt.scatter(episodes, rewards, s=20, c=num_failures, cmap='binary', edgecolors="k", vmin=0, vmax=max_num_failures)
+        plt.colorbar(label="num_failures")
+        plt.hlines(sum(rewards) / len(rewards), 0, num_failure_modes, colors="r")
+        # for i in range(num_failure_modes):
+        #     plt.text(episodes[i], rewards[i], failure_modes[i], size=5, ha="center", va="center")  # to plot joint ids
+        plt.text(max(episodes), 1300, f"the waited average = {wa:.2f}", ha="right")
+        plt.xlim(0, num_failure_modes)
+        plt.ylim(-100, 1300)
+        plt.xlabel("failure mode")
+        plt.ylabel("reward")
+        filename = os.path.join(graph_dirname, f"scatter_graph_within_{max_num_failures}_failures.png")
+        plt.savefig(filename)
+        plt.close()
 
     elif args.type == "record":
         # Create a window to init GLFW.
