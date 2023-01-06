@@ -75,7 +75,7 @@ def main():
         while True:
             num_episodes_in_eval = 2000  # Select a number
 
-            r, _, s = model.evaluate(num_episodes_in_eval, cfg['num_steps_in_eval'], False, make_graphs=True)
+            r, _, _ = model.evaluate(num_episodes_in_eval, cfg['num_steps_in_eval'], False, make_graphs=True)
 
             graph_dirname = os.path.join(os.path.dirname(cfg["initial_params_filename"]), "graph")
             os.makedirs(graph_dirname, exist_ok=True)
