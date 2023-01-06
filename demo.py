@@ -143,6 +143,9 @@ def main():
         # weighted average
         print(f"eval_weighted_reward: {wa}, eval_success_rate: {s}, ")
 
+        graph_dirname = os.path.join(os.path.dirname(cfg["initial_params_filename"]), "graph")
+        os.makedirs(graph_dirname, exist_ok=True)
+
         # variables for plot
         episodes = []
         failure_modes = []
@@ -154,9 +157,6 @@ def main():
             rewards.append(r[i][0])
             failure_modes.append(f"{r[i][1]}")
             num_failures.append(len(r[i][1]))
-
-        graph_dirname = os.path.join(os.path.dirname(cfg["initial_params_filename"]), "graph")
-        os.makedirs(graph_dirname, exist_ok=True)
 
         # scatter diagram with color bar
         plt.scatter(episodes, rewards, s=20, c=num_failures, cmap='binary', edgecolors="k", vmin=0, vmax=max_num_failures)
