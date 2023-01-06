@@ -72,7 +72,7 @@ def main():
 
     # make 4 graphs
     elif args.type == "graph":
-        while True:
+
             num_episodes_in_eval = 2000  # Select a number
 
             r, _, _ = model.evaluate(num_episodes_in_eval, cfg['num_steps_in_eval'], False, make_graphs=True)
@@ -131,7 +131,8 @@ def main():
             plt.savefig(filename)
             plt.close()
 
-            break
+
+
 
 
             break
