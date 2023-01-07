@@ -227,6 +227,8 @@ class Model:
             )
             if make_graphs is False:
                 rewards.append(r)
+                if (i + 1) % 200 == 0:
+                    print(f"{i + 1} / {num_episodes}")
             else:
                 reward_and_ids = []
                 reward_and_ids.append(r)
@@ -234,8 +236,6 @@ class Model:
                 rewards.append(reward_and_ids)
             contact_rates.append(c)
             num_success += int(is_success)
-            if (i + 1) % 200 == 0:
-                print(f"{i} / {num_episodes}")
         contact_rate = np.mean(contact_rates, axis=0)
         success_rate = num_success / num_episodes
         if use_elite:
