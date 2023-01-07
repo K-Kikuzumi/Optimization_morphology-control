@@ -73,7 +73,7 @@ def main():
     # make 4 graphs
     elif args.type == "graph":
 
-        num_episodes_in_eval = 50  # Select a number
+        num_episodes_in_eval = 1000  # Select a number
 
         r, _, _ = model.evaluate(num_episodes_in_eval, cfg['num_steps_in_eval'], False, make_graphs=True)
 
@@ -136,7 +136,7 @@ def main():
     # ! Attention: Comment out "self.failed_joint_ids = self.failed_joints_selector()" in gym_evolving_locomotion_envs.__reset_env()
     elif args.type == "graph_fail":
 
-        max_num_failures = 1  # Select a number
+        max_num_failures = 2  # Select a number
 
         r, _, s, wa = model.evaluate_failure(20, cfg['num_steps_in_eval'], max_num_failures)
 
