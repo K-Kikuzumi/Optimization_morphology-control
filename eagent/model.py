@@ -227,8 +227,6 @@ class Model:
             )
             if make_graphs is False:
                 rewards.append(r)
-                if (i + 1) % 200 == 0:
-                    print(f"{i + 1} / {num_episodes}")
             else:
                 reward_and_ids = []
                 reward_and_ids.append(r)
