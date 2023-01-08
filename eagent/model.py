@@ -234,6 +234,8 @@ class Model:
                 reward_and_ids.append(r)
                 reward_and_ids.append(self.env.failed_joint_ids)
                 rewards.append(reward_and_ids)
+                if (i + 1) % 200 == 0:
+                    print(f"{i + 1} / {num_episodes}")
             contact_rates.append(c)
             num_success += int(is_success)
         contact_rate = np.mean(contact_rates, axis=0)
