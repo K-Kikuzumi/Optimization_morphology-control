@@ -68,7 +68,7 @@ class XmlGenerater():
         for i in range(np.round(dof).astype(int)):
             id = i + 1
             [r0, r1] = self.robot_cfg["joint_range"]
-            [cr0, cr1] = self.robot_cfg["ctrlrange"]      
+            [cr0, cr1] = self.robot_cfg["ctrlrange"]
 
             # # a joint is locked
             # if rigid_id_2_joint_ids[current][0] in failed_joint_ids:
