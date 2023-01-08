@@ -79,6 +79,11 @@ def main():
 
         graph_dirname = os.path.join(os.path.dirname(cfg["initial_params_filename"]), "graph")
         os.makedirs(graph_dirname, exist_ok=True)
+        params_filename = ""
+        for i in str(cfg["initial_params_filename"]):
+            if i == "/":
+                i = "_"
+            params_filename += i
 
         # variables for plot
         episodes = []
@@ -98,7 +103,7 @@ def main():
         plt.ylim(-100, 1300)
         plt.xlabel("episode")
         plt.ylabel("reward")
-        filename = os.path.join(graph_dirname, f"scatter_diagram_with_colorbar_{num_episodes_in_eval}_episodes.png")
+        filename = os.path.join(graph_dirname, f"scatter_diagram_with_colorbar_{num_episodes_in_eval}_episodes_#{params_filename}#.png")
         plt.savefig(filename)
         plt.close()
 
@@ -109,7 +114,7 @@ def main():
         plt.ylim(-100, 1300)
         plt.xlabel("episode")
         plt.ylabel("reward")
-        filename = os.path.join(graph_dirname, f"scatter_diagram_{num_episodes_in_eval}_episodes.png")
+        filename = os.path.join(graph_dirname, f"scatter_diagram_{num_episodes_in_eval}_episodes_#{params_filename}#.png")
         plt.savefig(filename)
         plt.close()
 
@@ -119,7 +124,7 @@ def main():
         plt.xlim(0, num_episodes_in_eval * 0.3)
         plt.ylim(-100, 1300)
         plt.ylabel("reward")
-        filename = os.path.join(graph_dirname, f"histogram_{num_episodes_in_eval}_episodes.png")
+        filename = os.path.join(graph_dirname, f"histogram_{num_episodes_in_eval}_episodes_#{params_filename}#.png")
         plt.savefig(filename)
         plt.close()
 
@@ -127,7 +132,7 @@ def main():
         plt.violinplot(rewards, showmeans=True)
         plt.ylim(-100, 1300)
         plt.ylabel("reward")
-        filename = os.path.join(graph_dirname, f" violinplot_{num_episodes_in_eval}_episodes.png")
+        filename = os.path.join(graph_dirname, f" violinplot_{num_episodes_in_eval}_episodes_#{params_filename}#.png")
         plt.savefig(filename)
         plt.close()
 
@@ -145,6 +150,11 @@ def main():
 
         graph_dirname = os.path.join(os.path.dirname(cfg["initial_params_filename"]), "graph")
         os.makedirs(graph_dirname, exist_ok=True)
+        params_filename = ""
+        for i in str(cfg["initial_params_filename"]):
+            if i == "/":
+                i = "_"
+            params_filename += i
 
         # variables for plot
         episodes = []
@@ -169,7 +179,7 @@ def main():
         plt.ylim(-100, 1300)
         plt.xlabel("failure mode")
         plt.ylabel("reward")
-        filename = os.path.join(graph_dirname, f"scatter_graph_within_{max_num_failures}_failures.png")
+        filename = os.path.join(graph_dirname, f"scatter_graph_within_{max_num_failures}_failures_#{params_filename}#.png")
         plt.savefig(filename)
         plt.close()
 
