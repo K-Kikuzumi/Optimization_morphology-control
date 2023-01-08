@@ -301,7 +301,7 @@ class Model:
                 joint_failure_set.append(list(i))
             for failed_joint in joint_failure_set:
                 for _ in range(1):
-                    self.env.failed_joint_ids_tell(failed_joint)
+                    self.env.get_failed_joint_ids(failed_joint)
                     r, c, is_success = self.simulate_once(
                         render_mode=False,
                         num_steps=num_steps

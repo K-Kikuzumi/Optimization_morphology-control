@@ -96,5 +96,5 @@ class EvolvingTools():
 
         return self.failed_joint_ids
 
-    def failed_joint_ids_tell(self, failed_joint_ids):
+    def get_failed_joint_ids(self, failed_joint_ids):
         self.failed_joint_ids = failed_joint_ids
