@@ -94,10 +94,12 @@ def main():
         for i in range(num_episodes_in_eval):
             rewards.append(r[i][0])
             num_failures.append(len(r[i][1])) if len(r[i][1]) <= 4 else num_failures.append(4)  # regard more than 4 as 4
+        mean = sum(rewards) / len(rewards)
 
         # scatter diagram with colorbar
         plt.scatter(episodes, rewards, c=num_failures, cmap="binary", lw=0.5, edgecolors="k", vmin=0, vmax=4)
-        plt.hlines(sum(rewards) / len(rewards), 0, num_episodes_in_eval, colors="r")
+        plt.hlines(mean, 0, num_episodes_in_eval, colors="r", label=f"mean = {mean}")
+        plt.legend()
         plt.colorbar(label="num_failures")
         plt.xlim(0, num_episodes_in_eval)
         plt.ylim(-100, 1300)
@@ -109,7 +111,8 @@ def main():
 
         # scatter diagram
         plt.scatter(episodes, rewards)
-        plt.hlines(sum(rewards) / len(rewards), 0, num_episodes_in_eval, colors="r")
+        plt.hlines(mean, 0, num_episodes_in_eval, colors="r", label=f"mean = {mean}")
+        plt.legend()
         plt.xlim(0, num_episodes_in_eval)
         plt.ylim(-100, 1300)
         plt.xlabel("episode")
@@ -120,7 +123,8 @@ def main():
 
         # histogram
         plt.hist(rewards, range=(-100, 1300), rwidth=0.9, bins=28, orientation="horizontal")
-        plt.hlines(sum(rewards) / len(rewards), 0, num_episodes_in_eval * 0.3, colors="r")
+        plt.hlines(mean, 0, num_episodes_in_eval * 0.3, colors="r", label=f"mean = {mean}")
+        plt.legend()
         plt.xlim(0, num_episodes_in_eval * 0.3)
         plt.ylim(-100, 1300)
         plt.ylabel("reward")
@@ -130,6 +134,7 @@ def main():
 
         # violinplot
         plt.violinplot(rewards, showmeans=True)
+        plt.text(1, 1300, f"mean = {mean:.2f}", ha="left")
         plt.ylim(-100, 1300)
         plt.ylabel("reward")
         filename = os.path.join(graph_dirname, f" violinplot_{num_episodes_in_eval}_episodes_#{params_filename}#.png")
@@ -171,10 +176,10 @@ def main():
         # scatter diagram with color bar
         plt.scatter(episodes, rewards, s=20, c=num_failures, cmap='binary', edgecolors="k", vmin=0, vmax=max_num_failures)
         plt.colorbar(label="num_failures")
-        plt.hlines(sum(rewards) / len(rewards), 0, num_failure_modes, colors="r")
+        plt.hlines(wa, 0, num_failure_modes, colors="r", labe=f"the weighted average = {wa}")
         # for i in range(num_failure_modes):
         #     plt.text(episodes[i], rewards[i], failure_modes[i], size=5, ha="center", va="center")  # to plot joint ids
-        plt.text(max(episodes), 1300, f"the waited average = {wa:.2f}", ha="right")
+        plt.text(max(episodes), 1300, f"the weighted average = {wa:.2f}", ha="right")
         plt.xlim(0, num_failure_modes)
         plt.ylim(-100, 1300)
         plt.xlabel("failure mode")
