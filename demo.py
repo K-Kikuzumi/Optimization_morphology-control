@@ -176,7 +176,7 @@ def main():
         # scatter diagram with color bar
         plt.scatter(episodes, rewards, s=20, c=num_failures, cmap='binary', edgecolors="k", vmin=0, vmax=max_num_failures)
         plt.colorbar(label="num_failures")
-        plt.hlines(wa, 0, num_failure_modes, colors="r", labe=f"the weighted average = {wa}")
+        plt.hlines(wa, 0, num_failure_modes, colors="r", label=f"the weighted average = {wa}")
         # for i in range(num_failure_modes):
         #     plt.text(episodes[i], rewards[i], failure_modes[i], size=5, ha="center", va="center")  # to plot joint ids
         plt.text(max(episodes), 1300, f"the weighted average = {wa:.2f}", ha="right")
