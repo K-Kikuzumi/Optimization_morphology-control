@@ -22,7 +22,6 @@ class Transform():
         for child in self.structure_tree[current]:
             dof = int(self.dofs[child])
             self.structure_edges_new.append([parent, id, dof])
-            print(self.structure_edges_new)
             parent_id = id
             self.mu_format_list[id] = self.mu_old_list[child]
             self.sigma_format_list[id] = self.sigma_old_list[child]
@@ -81,8 +80,6 @@ class Transform():
         for parent, child, dof in self.structure_edges_old:
             self.structure_tree[parent].append(child)
             self.dofs[child] = dof
-        print(self.structure_tree)
-        print(self.dofs)
 
         self.mu_old_list = np.array(self.mu_old).reshape([-1, 9]).tolist()
         self.sigma_old_list = np.array(self.sigma_old).reshape([-1, 9]).tolist()
