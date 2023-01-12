@@ -20,7 +20,7 @@ class Transform():
 
     def transform_structure_para(self, id, current, parent):
         for child in self.structure_tree[current]:
-            dof = self.dofs[child]
+            dof = int(self.dofs[child])
             self.structure_edges_new.append([parent, id, dof])
             print(self.structure_edges_new)
             parent_id = id
