@@ -77,7 +77,7 @@ class XmlGenerater():
             [fr0, fr1] = self.robot_cfg["forcerange"]
             if rigid_id_2_joint_ids[current][0] in failed_joint_ids:
                 xml_data_list.append(f"""
-{tab}   <joint damping="0" axis="{axises[i][0]} {axises[i][1]} {axises[i][2]}" pos="0.0 0.0 0.0" range="{r0} {r1}" type="hinge" name="robot0:joint_{rigid_body_name}_{id}"/>""")
+{tab}   <joint armature="0" axis="{axises[i][0]} {axises[i][1]} {axises[i][2]}" pos="0.0 0.0 0.0" range="{r0} {r1}" type="hinge" name="robot0:joint_{rigid_body_name}_{id}"/>""")
                 if self.robot_cfg["actuator"] == "motor":
                     gear = self.robot_cfg["gear"]
                     self.actuators_xml.append(f"""

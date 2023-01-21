@@ -9,7 +9,7 @@
             "torso_radius": 0.01,
             "scale": 0.08,
             "armature": 1,
-            "damping": 1,
+            "damping": 0.01,
             "joint_range": [-0.7, 0.7],
             "ctrlrange": [-0.15, 0.15],
             "forcerange": [-0.15, 0.15],
