@@ -73,7 +73,7 @@ def main():
     # make 4 graphs
     elif args.type == "graph":
 
-        num_episodes_in_eval = 1000  # Select a number
+        num_episodes_in_eval = 3000  # Select a number
 
         r, _, _ = model.evaluate(num_episodes_in_eval, cfg['num_steps_in_eval'], False, make_graphs=True)
 
