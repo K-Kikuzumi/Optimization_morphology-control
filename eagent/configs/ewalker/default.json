@@ -1,7 +1,7 @@
 {
     "env_name": "EvolvingWalkerEnv-v2",
     "initial_params_filename": "zoo/walker/starfish6_48.64.json",
-    "max_num_limbs": 18,
+    "max_num_limbs": 20,
     "env_specific_cfg": {
         "alive_bonus_type": "one",
         "robot_cfg": {
@@ -65,14 +65,14 @@
             "num_ema_in_contact": 10
         },
         "contact_fitting": {
-            "sight": 100,
-            "slope_threshold": 0.035,
+            "sight": 200,
+            "slope_threshold": 0.030,
             "min_contact_rate": 0.15,
             "decrease_interval": 0,
-            "num_ema_in_contact": 100
+            "num_ema_in_contact": 200
         }
     },
-    "structure_lr": 0.001,
+    "structure_lr": 0.005,
     "do_structure_improvement": true,
     "do_edges_selection": true,
     "num_species": 6,
