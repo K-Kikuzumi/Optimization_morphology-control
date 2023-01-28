@@ -9,7 +9,7 @@
             "torso_radius": 0.01,
             "scale": 0.08,
             "armature": 1,
-            "damping": 0.01,
+            "damping": 1,
             "joint_range": [-0.7, 0.7],
             "ctrlrange": [-0.15, 0.15],
             "forcerange": [-0.15, 0.15],
@@ -86,5 +86,5 @@
     "checkpoint_cycle": 750,
     "policy_verbose": 0,
     "save_every_edges": true,
-    "max_generation": 18000
+    "max_generation": 12000
 }
