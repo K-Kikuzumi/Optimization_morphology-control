@@ -19,7 +19,7 @@ class EvolvingWalkerEnv(mujoco_env.MujocoEnv, utils.EzPickle, EvolvingTools):
         self.__reset_env()
 
     def __reset_env(self):
-        # self.failed_joint_ids = self.failed_joints_selector()
+        self.failed_joint_ids = self.failed_joints_selector()
         # Create an xml file and delete it immediately after loading
         xml_data = WalkerXmlGenerater(self.env_cfg).generate_xml(
             self.structure_tree,
