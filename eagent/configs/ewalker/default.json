@@ -88,5 +88,5 @@
     "checkpoint_cycle": 750,
     "policy_verbose": 0,
     "save_every_edges": true,
-    "max_generation": 12000
+	"switch_generation":10000
 }

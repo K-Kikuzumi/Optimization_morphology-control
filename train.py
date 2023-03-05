@@ -223,6 +223,12 @@ class Processor():
                         "structure_weights": current_best_structure_weights,
                         "policy_weights": current_best_policy_weights.tolist(),
                     }, f)
+            # Save the best parameters in order to make initial parameters of MDM+ICM
+            if trainer.generation == cfg["switch_generation"]:
+                with open(os.path.join(output_dirname, "parameter_best.json"), "r") as f1:
+                    f1 = json.load(f1)
+                    with open(os.path.join(output_dirname, f"parameter_{trainer.generation}_best.json"), "w") as f:
+                        json.dump(f1, f)
 
             # * IMPORTANT
             trainer.compute_next_params()
