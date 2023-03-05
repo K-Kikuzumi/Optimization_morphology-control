@@ -84,9 +84,10 @@
     "use_elite_in_eval": false,
     "policy_selection_cycle": 5,
     "edges_selection_cycle": 10000,
-    "save_parameter_cycle": 750,
-    "checkpoint_cycle": 750,
+    "save_parameter_cycle": 500,
+    "checkpoint_cycle": 500,
     "policy_verbose": 0,
     "save_every_edges": true,
+    "max_generation": 20000,
 	"switch_generation":10000
 }
