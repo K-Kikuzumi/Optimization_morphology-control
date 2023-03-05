@@ -14,7 +14,9 @@
             "ctrlrange": [-0.15, 0.15],
             "forcerange": [-0.15, 0.15],
             "gear": 150,
-            "self_collision": true
+            "self_collision": true,
+			"failure_occurrence": true,
+			"failure_type": "free"
         }
     },
     "policy": "MlpPolicy",

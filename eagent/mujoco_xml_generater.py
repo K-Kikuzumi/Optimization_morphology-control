@@ -52,7 +52,14 @@ class XmlGenerater():
         tab = " " * (8 + 4 * depth)
 
         # # make a marker at the failed joint
-        if rigid_id_2_joint_ids[current][0] in failed_joint_ids:
+        if rigid_id_2_joint_ids[current][0] in failed_joint_ids and self.robot_cfg["failure_type"] == "free":
+            xml_data_list.append(f"""
+{tab}<body pos="{body_pos[0]} {body_pos[1]} {body_pos[2]}" name="body_{rigid_body_name}_failed_joint">
+{tab}   <geom rgba="0 0 1 0.3" conaffinity="0" contype="0" name="geom_{rigid_body_name}_failed_joint" class="robot0:geom" size="0.2" type="sphere" mass ="0"/>
+{tab}</body>
+{tab}<body pos="{body_pos[0]} {body_pos[1]} {body_pos[2]}" name="body_{rigid_body_name}">
+{tab}   <geom rgba="0 0 1 0.8" conaffinity="{conaffinity}" fromto="0.0 0.0 0.0 {fromto[0]} {fromto[1]} {fromto[2]}" name="geom_{rigid_body_name}" class="robot0:geom" size="{scale}" type="capsule"/>""")
+        elif rigid_id_2_joint_ids[current][0] in failed_joint_ids and self.robot_cfg["failure_type"] == "lock":
             xml_data_list.append(f"""
 {tab}<body pos="{body_pos[0]} {body_pos[1]} {body_pos[2]}" name="body_{rigid_body_name}_failed_joint">
 {tab}   <geom rgba="1 0 0 0.3" conaffinity="0" contype="0" name="geom_{rigid_body_name}_failed_joint" class="robot0:geom" size="0.2" type="sphere" mass ="0"/>
@@ -68,24 +75,28 @@ class XmlGenerater():
         for i in range(np.round(dof).astype(int)):
             id = i + 1
             [r0, r1] = self.robot_cfg["joint_range"]
+
+            # locked failures
+            if rigid_id_2_joint_ids[current][0] in failed_joint_ids and self.robot_cfg["failure_type"] == "lock":
+                [r0, r1] = [-1e-10, 0]
+
             [cr0, cr1] = self.robot_cfg["ctrlrange"]
-
-            # # a joint is locked
-            # if rigid_id_2_joint_ids[current][0] in failed_joint_ids:
-            #     [r0, r1] = [-1e-8, 0]
-
             [fr0, fr1] = self.robot_cfg["forcerange"]
-            if rigid_id_2_joint_ids[current][0] in failed_joint_ids:
+
+            # free-swinging failures
+            if rigid_id_2_joint_ids[current][0] in failed_joint_ids and self.robot_cfg["failure_type"] == "free":
+                [cr0, cr1] = [-1e-10, 0]
+                [fr0, fr1] = [-1e-10, 0]
                 xml_data_list.append(f"""
 {tab}   <joint armature="0" damping="0" axis="{axises[i][0]} {axises[i][1]} {axises[i][2]}" pos="0.0 0.0 0.0" range="{r0} {r1}" type="hinge" name="robot0:joint_{rigid_body_name}_{id}"/>""")
                 if self.robot_cfg["actuator"] == "motor":
                     gear = self.robot_cfg["gear"]
                     self.actuators_xml.append(f"""
-        <motor ctrllimited="true" ctrlrange="{cr0} {cr1}" forcerange="{fr0} {fr1}" joint="robot0:joint_{rigid_body_name}_{id}" gear="{gear}"/>""")
+    <motor ctrllimited="true" ctrlrange="{cr0} {cr1}" forcerange="{fr0} {fr1}" joint="robot0:joint_{rigid_body_name}_{id}" gear="{gear}"/>""")
                 elif self.robot_cfg["actuator"] == "position":
                     kp = self.robot_cfg["kp"]
                     self.actuators_xml.append(f"""
-        <position ctrllimited="true" ctrlrange="{cr0} {cr1}" forcerange="{fr0} {fr1}" kp="{kp}" joint="robot0:joint_{rigid_body_name}_{id}"/>""")
+    <position ctrllimited="true" ctrlrange="{cr0} {cr1}" forcerange="{fr0} {fr1}" kp="{kp}" joint="robot0:joint_{rigid_body_name}_{id}"/>""")
                 else:
                     raise NotImplementedError
             else:
@@ -125,6 +136,8 @@ class WalkerXmlGenerater(XmlGenerater):
             "forcerange": [-1.0, 1.0],
             "gear": 150,
             "self_collision": True,
+            "failure_occurrence": False,
+            "failure_type": "free/lock"
         }
         XmlGenerater.__init__(self, env_cfg)
 

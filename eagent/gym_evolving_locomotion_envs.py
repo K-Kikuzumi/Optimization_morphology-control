@@ -19,7 +19,8 @@ class EvolvingWalkerEnv(mujoco_env.MujocoEnv, utils.EzPickle, EvolvingTools):
         self.__reset_env()
 
     def __reset_env(self):
-        self.failed_joint_ids = self.failed_joints_selector()
+        if self.env_cfg["robot_cfg"]["failure_occurrence"]:
+            self.failed_joint_ids = self.failed_joints_selector()
         # Create an xml file and delete it immediately after loading
         xml_data = WalkerXmlGenerater(self.env_cfg).generate_xml(
             self.structure_tree,
@@ -92,14 +93,10 @@ class EvolvingWalkerEnv(mujoco_env.MujocoEnv, utils.EzPickle, EvolvingTools):
                 action[joint_id] = all_joint_action[rigid_id * 2 + idx]
                 idx += 1
 
-        # print(self.failed_joint_ids)
-        for failed_joint_id in self.failed_joint_ids:
-            # a joint is 0 power
-            action[failed_joint_id] = 0
-
-            # # a joint is low power!!!!
-            # rate_of_torque_change = 0.5
-            # action[failed_joint_id] *= rate_of_torque_change
+        # # print(self.failed_joint_ids)
+        # for failed_joint_id in self.failed_joint_ids:
+        #     # a joint is 0 power
+        #     action[failed_joint_id] = 0
 
         a = actuation_center + action * actuation_range
         return np.clip(a, ctrlrange[:, 0], ctrlrange[:, 1])
