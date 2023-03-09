@@ -93,10 +93,10 @@ class EvolvingWalkerEnv(mujoco_env.MujocoEnv, utils.EzPickle, EvolvingTools):
                 action[joint_id] = all_joint_action[rigid_id * 2 + idx]
                 idx += 1
 
-        # # print(self.failed_joint_ids)
-        # for failed_joint_id in self.failed_joint_ids:
-        #     # a joint is 0 power
-        #     action[failed_joint_id] = 0
+        #  free-swinging failures
+        if self.env_cfg["robot_cfg"]["failure_type"] == "free":
+            for failed_joint_id in self.failed_joint_ids:
+                action[failed_joint_id] = 0
 
         a = actuation_center + action * actuation_range
         return np.clip(a, ctrlrange[:, 0], ctrlrange[:, 1])

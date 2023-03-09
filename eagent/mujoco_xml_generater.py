@@ -85,8 +85,6 @@ class XmlGenerater():
 
             # free-swinging failures
             if rigid_id_2_joint_ids[current][0] in failed_joint_ids and self.robot_cfg["failure_type"] == "free":
-                [cr0, cr1] = [-1e-10, 0]
-                [fr0, fr1] = [-1e-10, 0]
                 xml_data_list.append(f"""
 {tab}   <joint armature="0" damping="0" axis="{axises[i][0]} {axises[i][1]} {axises[i][2]}" pos="0.0 0.0 0.0" range="{r0} {r1}" type="hinge" name="robot0:joint_{rigid_body_name}_{id}"/>""")
                 if self.robot_cfg["actuator"] == "motor":
