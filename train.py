@@ -17,6 +17,8 @@ from eagent.model import Model
 from eagent.trainer import Trainer
 from eagent.config import cfg_dict
 
+from link_history import link
+
 version = "0.8.8"
 
 
@@ -262,6 +264,14 @@ class Processor():
             # Save logs at every generation
             with open(os.path.join(output_dirname, "history.json"), "w") as f:
                 json.dump(history, f, indent=4)
+
+            initial_params_dirname = os.path.dirname(cfg["initial_params_filename"])
+            switch_generation = cfg["switch_generation"]
+            output_dirname = cfg["output_dirname"]
+            if "history.json" in os.listdir(initial_params_dirname):
+                first_half_dirname = initial_params_dirname
+                second_half_dirname = output_dirname
+                link(first_half_dirname, switch_generation, second_half_dirname)
 
             sys.stdout.flush()
 
