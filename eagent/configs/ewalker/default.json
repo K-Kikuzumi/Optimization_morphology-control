@@ -15,8 +15,8 @@
             "forcerange": [-0.15, 0.15],
             "gear": 150,
             "self_collision": true,
-			"failure_occurrence": true,
-			"failure_type": "free"
+			"failure_occurrence": false,
+			"failure_type": ""
         }
     },
     "policy": "MlpPolicy",
@@ -67,11 +67,11 @@
             "num_ema_in_contact": 10
         },
         "contact_fitting": {
-            "sight": 200,
-            "slope_threshold": 0.030,
+            "sight": 100,
+            "slope_threshold": 0.035,
             "min_contact_rate": 0.15,
             "decrease_interval": 0,
-            "num_ema_in_contact": 200
+            "num_ema_in_contact": 100
         }
     },
     "structure_lr": 0.005,
@@ -80,7 +80,7 @@
     "num_species": 6,
     "num_individuals": 12,
     "num_steps_in_eval": 500,
-    "num_episodes_in_eval":10,
+    "num_episodes_in_eval": 6,
     "use_elite_in_eval": false,
     "policy_selection_cycle": 5,
     "edges_selection_cycle": 10000,
