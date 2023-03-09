@@ -6,51 +6,7 @@
     "do_edges_selection": true,
     "num_species": 1,
     "num_individuals": 12,
-	"save_parameter_cycle": 500,
-    "checkpoint_cycle": 500,
 	"max_generation": 10000,
 	"switch_generation": 10000,
-    "env_specific_cfg": {
-        "alive_bonus_type": "one",
-        "robot_cfg": {
-            "actuator": "motor",
-            "torso_radius": 0.01,
-            "scale": 0.08,
-            "armature": 1,
-            "damping": 1,
-            "joint_range": [-0.7, 0.7],
-            "ctrlrange": [-0.15, 0.15],
-            "forcerange": [-0.15, 0.15],
-            "gear": 150,
-            "self_collision": true,
-			"failure_occurrence": false,
-			"failure_type": "free"
-        }
-    },
-    "edges_selection_params": {
-        "patient": {
-            "patience": 300
-        },
-        "fitting": {
-            "sight": 500,
-            "slope_threshold": 0.025
-        },
-        "fitting_rand": {
-            "sight": 500,
-            "slope_threshold": 0.025
-        },
-        "contact": {
-            "min_contact_rate": 0.1,
-            "decrease_interval": 0,
-            "num_ema_in_contact": 10
-        },
-        "contact_fitting": {
-            "sight": 100,
-            "slope_threshold": 0.035,
-            "min_contact_rate": 0.15,
-            "decrease_interval": 0,
-            "num_ema_in_contact": 100
-        }
-    },
-    "num_episodes_in_eval":6
+    "num_episodes_in_eval": 6
 }

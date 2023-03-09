@@ -6,8 +6,6 @@
     "do_edges_selection": true,
     "num_species": 6,
     "num_individuals": 12,
-	"save_parameter_cycle": 500,
-    "checkpoint_cycle": 500,
 	"max_generation": 10000,
 	"switch_generation": 10000,
 	"env_specific_cfg": {
@@ -51,5 +49,6 @@
             "decrease_interval": 0,
             "num_ema_in_contact": 200
         }
-    }
+    },
+    "num_episodes_in_eval": 10
 }
