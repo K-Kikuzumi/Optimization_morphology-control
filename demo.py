@@ -71,19 +71,18 @@ def main():
             print(f"eval_reward: {r}, eval_success_rate: {s}")
 
     # make 4 graphs
-    elif args.type == "graph":
+    elif args.type == "sim":
 
-        num_episodes_in_eval = 3000  # Select a number
-
+        num_episodes_in_eval = 5000  # Select a number
+        print(f"to simulate {num_episodes_in_eval} times")
         r, _, _ = model.evaluate(num_episodes_in_eval, cfg['num_steps_in_eval'], False, make_graphs=True)
 
-        graph_dirname = os.path.join(os.path.dirname(cfg["initial_params_filename"]), "graph")
-        os.makedirs(graph_dirname, exist_ok=True)
-        params_filename = ""
-        for i in str(cfg["initial_params_filename"]):
-            if i == "/":
-                i = "_"
-            params_filename += i
+        result_dirname = os.path.join(os.path.dirname(cfg["initial_params_filename"]), "result")
+        os.makedirs(result_dirname, exist_ok=True)
+        filename = os.path.join(result_dirname, f"rewards_and_joints_{num_episodes_in_eval}_episodes.json")
+        with open(filename, "w") as f:
+            json.dump(r, f, indent=2)
+        print("finish")
 
         # variables for plot
         episodes = []
