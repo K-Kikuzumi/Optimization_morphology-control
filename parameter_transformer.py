@@ -5,12 +5,14 @@ from eagent.config import cfg_dict
 
 
 class Transform():
-    def __init__(self, log_old, cfg_name):
+    def __init__(self, log_old, parameter_filename, cfg_name, output_dir):
         self.log_old = log_old
+        self.parameter_filename = parameter_filename
         self.cfg_name = cfg_name
+        self.output_dir = output_dir
         with open(os.path.join(log_old, "cfg.json"), "r") as f:
             self.cfg_old = json.load(f)
-        with open(os.path.join(log_old, "parameter_best.json"), "r") as f:
+        with open(os.path.join(log_old, f"parameter_{parameter_filename}.json"), "r") as f:
             self.parameter_old = json.load(f)
         self.cfg_new = cfg_dict[cfg_name]
         with open(self.cfg_new["initial_params_filename"], "r") as f:
@@ -26,7 +28,9 @@ class Transform():
             self.mu_format_list[id] = self.mu_old_list[child]
             self.sigma_format_list[id] = self.sigma_old_list[child]
             id += 1
-            assert id <= self.max_num_limbs_new
+            # assert id < self.max_num_limbs_new
+            if id >= self.max_num_limbs_new:
+                raise Exception("########num of limbs is out of code graph#######")
             id = self.transform_structure_para(id, child, parent_id)
         return id
 
@@ -66,25 +70,25 @@ class Transform():
 
     def transform_parameter_file(self):
         parameter_old = self.parameter_old
-        self.structure_edges_old = parameter_old["structure_edges"]
-        self.mu_old = parameter_old["structure_weights"]["mu"]
-        self.sigma_old = parameter_old["structure_weights"]["sigma"]
+        structure_edges_old = parameter_old["structure_edges"]
+        mu_old = parameter_old["structure_weights"]["mu"]
+        sigma_old = parameter_old["structure_weights"]["sigma"]
 
         parameter_new_format = self.parameter_new_format
-        self.mu_format = parameter_new_format["structure_weights"]["mu"]
-        self.sigma_format = parameter_new_format["structure_weights"]["sigma"]
+        mu_format = parameter_new_format["structure_weights"]["mu"]
+        sigma_format = parameter_new_format["structure_weights"]["sigma"]
 
         max_num_limbs_old = self.max_num_limbs_old
         self.structure_tree = [[] for i in range(max_num_limbs_old + 1)]
         self.dofs = np.zeros(max_num_limbs_old)
-        for parent, child, dof in self.structure_edges_old:
+        for parent, child, dof in structure_edges_old:
             self.structure_tree[parent].append(child)
             self.dofs[child] = dof
 
-        self.mu_old_list = np.array(self.mu_old).reshape([-1, 9]).tolist()
-        self.sigma_old_list = np.array(self.sigma_old).reshape([-1, 9]).tolist()
-        self.mu_format_list = np.array(self.mu_format).reshape([-1, 9]).tolist()
-        self.sigma_format_list = np.array(self.sigma_format).reshape([-1, 9]).tolist()
+        self.mu_old_list = np.array(mu_old).reshape([-1, 9]).tolist()
+        self.sigma_old_list = np.array(sigma_old).reshape([-1, 9]).tolist()
+        self.mu_format_list = np.array(mu_format).reshape([-1, 9]).tolist()
+        self.sigma_format_list = np.array(sigma_format).reshape([-1, 9]).tolist()
 
         self.structure_edges_new = []
         self.transform_structure_para(0, -1, -1)
@@ -96,13 +100,19 @@ class Transform():
 
         parameter_new = {"structure_edges" : structure_edges_new, "structure_weights" : {"mu" : mu_new, "sigma" : sigma_new}, "policy_weights" : policy_weights_new}
 
-        with open(os.path.join("zoo", "walker", f"{os.path.basename(self.log_old)}_for_{self.cfg_name}"), 'w') as f:
+        # with open(os.path.join("zoo", "walker", f"{os.path.basename(self.log_old)}_parameter{self.parameter_filename}_max{self.max_num_limbs_new}.json"), 'w') as f:
+        #     json.dump(parameter_new, f)
+
+        os.makedirs(self.output_dir, exist_ok=True)
+        with open(os.path.join(self.output_dir, "parameter_transformed.json"), 'w') as f:
             json.dump(parameter_new, f)
 
 
 if __name__ == '__main__':
     # log_old =
     # cfg_name =
-    log_old = "log/old/0.8.8_20220114_005020"
+    log_old = "log/curriculum_free_1_first_half"
+    parameter_filename = "best"  # have to change
     cfg_name = "ewalker_iso6.json"
-    Transform(log_old, cfg_name).transform_parameter_file()
+    output_dir = "log/curriculum_free_1_second_half"
+    Transform(log_old, parameter_filename, cfg_name, output_dir).transform_parameter_file()
