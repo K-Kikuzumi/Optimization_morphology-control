@@ -84,61 +84,69 @@ def main():
             json.dump(r, f, indent=2)
         print("finish")
 
-        # variables for plot
-        episodes = []
-        rewards = []
-        num_failures = []
-        for i in range(num_episodes_in_eval):
-            episodes.append(i + 1)
-        for i in range(num_episodes_in_eval):
-            rewards.append(r[i][0])
-            num_failures.append(len(r[i][1])) if len(r[i][1]) <= 4 else num_failures.append(4)  # regard more than 4 as 4
-        mean = sum(rewards) / len(rewards)
+        # graph_dirname = os.path.join(os.path.dirname(cfg["initial_params_filename"]), "graph")
+        # os.makedirs(graph_dirname, exist_ok=True)
+        # params_filename = ""
+        # for i in str(cfg["initial_params_filename"]):
+        #     if i == "/":
+        #         i = "_"
+        #     params_filename += i
 
-        # scatter diagram with colorbar
-        plt.scatter(episodes, rewards, c=num_failures, cmap="binary", lw=0.5, edgecolors="k", vmin=0, vmax=4)
-        plt.hlines(mean, 0, num_episodes_in_eval, colors="r", label=f"mean = {mean}")
-        plt.legend()
-        plt.colorbar(label="num_failures")
-        plt.xlim(0, num_episodes_in_eval)
-        plt.ylim(-100, 1300)
-        plt.xlabel("episode")
-        plt.ylabel("reward")
-        filename = os.path.join(graph_dirname, f"scatter_diagram_with_colorbar_{num_episodes_in_eval}_episodes_#{params_filename}#.png")
-        plt.savefig(filename)
-        plt.close()
+        # # variables for plot
+        # episodes = []
+        # rewards = []
+        # num_failures = []
+        # for i in range(num_episodes_in_eval):
+        #     episodes.append(i + 1)
+        # for i in range(num_episodes_in_eval):
+        #     rewards.append(r[i][0])
+        #     num_failures.append(len(r[i][1])) if len(r[i][1]) <= 4 else num_failures.append(4)  # regard more than 4 as 4
+        # mean = sum(rewards) / len(rewards)
 
-        # scatter diagram
-        plt.scatter(episodes, rewards)
-        plt.hlines(mean, 0, num_episodes_in_eval, colors="r", label=f"mean = {mean}")
-        plt.legend()
-        plt.xlim(0, num_episodes_in_eval)
-        plt.ylim(-100, 1300)
-        plt.xlabel("episode")
-        plt.ylabel("reward")
-        filename = os.path.join(graph_dirname, f"scatter_diagram_{num_episodes_in_eval}_episodes_#{params_filename}#.png")
-        plt.savefig(filename)
-        plt.close()
+        # # scatter diagram with colorbar
+        # plt.scatter(episodes, rewards, c=num_failures, cmap="binary", lw=0.5, edgecolors="k", vmin=0, vmax=4)
+        # plt.hlines(mean, 0, num_episodes_in_eval, colors="r", label=f"mean = {mean}")
+        # plt.legend()
+        # plt.colorbar(label="num_failures")
+        # plt.xlim(0, num_episodes_in_eval)
+        # plt.ylim(-100, 1300)
+        # plt.xlabel("episode")
+        # plt.ylabel("reward")
+        # filename = os.path.join(graph_dirname, f"scatter_diagram_with_colorbar_{num_episodes_in_eval}_episodes_#{params_filename}#.png")
+        # plt.savefig(filename)
+        # plt.close()
 
-        # histogram
-        plt.hist(rewards, range=(-100, 1300), rwidth=0.9, bins=28, orientation="horizontal")
-        plt.hlines(mean, 0, num_episodes_in_eval * 0.3, colors="r", label=f"mean = {mean}")
-        plt.legend()
-        plt.xlim(0, num_episodes_in_eval * 0.3)
-        plt.ylim(-100, 1300)
-        plt.ylabel("reward")
-        filename = os.path.join(graph_dirname, f"histogram_{num_episodes_in_eval}_episodes_#{params_filename}#.png")
-        plt.savefig(filename)
-        plt.close()
+        # # scatter diagram
+        # plt.scatter(episodes, rewards)
+        # plt.hlines(mean, 0, num_episodes_in_eval, colors="r", label=f"mean = {mean}")
+        # plt.legend()
+        # plt.xlim(0, num_episodes_in_eval)
+        # plt.ylim(-100, 1300)
+        # plt.xlabel("episode")
+        # plt.ylabel("reward")
+        # filename = os.path.join(graph_dirname, f"scatter_diagram_{num_episodes_in_eval}_episodes_#{params_filename}#.png")
+        # plt.savefig(filename)
+        # plt.close()
 
-        # violinplot
-        plt.violinplot(rewards, showmeans=True)
-        plt.text(1, 1300, f"mean = {mean:.2f}", ha="left")
-        plt.ylim(-100, 1300)
-        plt.ylabel("reward")
-        filename = os.path.join(graph_dirname, f" violinplot_{num_episodes_in_eval}_episodes_#{params_filename}#.png")
-        plt.savefig(filename)
-        plt.close()
+        # # histogram
+        # plt.hist(rewards, range=(-100, 1300), rwidth=0.9, bins=28, orientation="horizontal")
+        # plt.hlines(mean, 0, num_episodes_in_eval * 0.3, colors="r", label=f"mean = {mean}")
+        # plt.legend()
+        # plt.xlim(0, num_episodes_in_eval * 0.3)
+        # plt.ylim(-100, 1300)
+        # plt.ylabel("reward")
+        # filename = os.path.join(graph_dirname, f"histogram_{num_episodes_in_eval}_episodes_#{params_filename}#.png")
+        # plt.savefig(filename)
+        # plt.close()
+
+        # # violinplot
+        # plt.violinplot(rewards, showmeans=True)
+        # plt.text(1, 1300, f"mean = {mean:.2f}", ha="left")
+        # plt.ylim(-100, 1300)
+        # plt.ylabel("reward")
+        # filename = os.path.join(graph_dirname, f" violinplot_{num_episodes_in_eval}_episodes_#{params_filename}#.png")
+        # plt.savefig(filename)
+        # plt.close()
 
     # make a scatter diagram where rewards with failures within max_num_failures are shown
     # calculate a weighted average
