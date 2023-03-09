@@ -1,5 +1,5 @@
 {
-    "initial_params_filename": "zoo/walker/starfish6_48.64.json",
+    "initial_params_filename": "log/thesis_lock_mdm_1/parameter_transformed.json",
     "max_num_limbs": 20,
     "edges_selection_criteria": "fitting",
     "do_structure_improvement": true,
