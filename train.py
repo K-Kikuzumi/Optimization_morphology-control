@@ -232,6 +232,9 @@ class Processor():
                     f1 = json.load(f1)
                     with open(os.path.join(output_dirname, f"parameter_{trainer.generation}_best_pretransformed.json"), "w") as f:
                         json.dump(f1, f)
+                switch_generation = cfg["switch_generation"]
+                if "parameter_transformed.json" not in cfg["initial_params_filename"]:
+                    Transform(output_dirname, f"{switch_generation}_best_pretransformed", "ewalker_iso6.json", output_dirname).transform_parameter_file()
 
             # * IMPORTANT
             trainer.compute_next_params()
@@ -402,10 +405,6 @@ def main():
     mpi_status, mpi_rank = mpi_fork(num_follwer + 1, cfg["output_dirname"])
     print(f"status: {mpi_status}, rank: {mpi_rank} (0-{num_follwer})")
     if (mpi_status == "parent"):
-        switch_generation = cfg["switch_generation"]
-        output_dirname = cfg["output_dirname"]
-        if "parameter_transformed.json" not in cfg["initial_params_filename"]:
-            Transform(output_dirname, f"{switch_generation}_best_pretransformed", "ewalker_iso6.json", output_dirname).transform_parameter_file()
         print("Finished training")
     elif (mpi_status == "child_leader"):
         Processor(cfg, mpi_rank).leader_process()
