@@ -7,6 +7,7 @@ cfg_dict = {}
 cfg_dirnames = []
 cfg_dirnames.append(os.path.join("eagent", "configs", "ewalker"))
 cfg_dirnames.append(os.path.join("eagent", "configs", "ehand_egg"))
+cfg_dirnames.append(os.path.join("eagent", "configs", "ewalker_method"))
 default_filename = "default.json"
 
 for cfg_dirname in cfg_dirnames:
