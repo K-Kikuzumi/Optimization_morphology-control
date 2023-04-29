@@ -1,5 +1,5 @@
 {
-    "initial_params_filename": "log/thesis_free_mdm_2/parameter_transformed.json",
+    "initial_params_filename": "log/thesis_free_mdm_3/parameter_transformed.json",
     "max_num_limbs": 20,
     "edges_selection_criteria": "fitting",
     "do_structure_improvement": true,
